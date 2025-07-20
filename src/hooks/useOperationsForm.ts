@@ -3,6 +3,8 @@ import { Modal } from "antd";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { operationSchema } from "@/validations/operations";
 
 const defaultValues: FormValues = {
   name: "",
@@ -21,8 +23,14 @@ export function useOperationsForm({ setOperations }: Props) {
   const [editingOp, setEditingOp] = useState<Operation | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues,
+    resolver: yupResolver(operationSchema),
   });
 
   const openAdd = () => {
@@ -86,16 +94,22 @@ export function useOperationsForm({ setOperations }: Props) {
     });
   };
 
+  const submitForm = () => {
+    handleSubmit(onSubmit)();
+  };
+
   return {
     editingOp,
     setEditingOp,
     isModalVisible,
     setModalVisible,
     control,
+    errors,
     handleSubmit,
     openAdd,
     openEdit,
     onSubmit,
     onDelete,
+    submitForm,
   };
 }

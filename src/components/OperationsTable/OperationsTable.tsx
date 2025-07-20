@@ -16,6 +16,7 @@ import { Controller } from "react-hook-form";
 import type { Moment } from "moment";
 import type { Operation } from "@/types/types";
 import { useOperationsForm } from "@/hooks/useOperationsForm";
+import type { SortOrder } from "antd/es/table/interface";
 
 type Props = {
   operations: Operation[];
@@ -27,40 +28,64 @@ export default function OperationsTable({ operations, setOperations }: Props) {
     editingOp,
     isModalVisible,
     control,
-    handleSubmit,
+    errors,
     openAdd,
     openEdit,
-    onSubmit,
     onDelete,
     setModalVisible,
+    submitForm,
   } = useOperationsForm({ setOperations });
 
   const columns = [
-    { title: "Ação", dataIndex: "name", key: "name" },
+    {
+      title: "Ação",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a: Operation, b: Operation) => a.name.localeCompare(b.name),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+    },
     {
       title: "Data",
       dataIndex: "date",
       key: "date",
       render: (date: Moment) => date.format("DD/MM/YYYY"),
+      sorter: (a: Operation, b: Operation) =>
+        a.date!.valueOf() - b.date!.valueOf(),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
     },
     {
       title: "Tipo",
       dataIndex: "type",
       key: "type",
       render: (t: "buy" | "sell") => (t === "buy" ? "Compra" : "Venda"),
+      filters: [
+        { text: "Compra", value: "buy" },
+        { text: "Venda", value: "sell" },
+      ],
+      onFilter: (value, record) => record.type === value,
     },
     {
       title: "Preço",
       dataIndex: "price",
       key: "price",
-      render: (v: number) => v.toFixed(2),
+      render: (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`,
+      sorter: (a: Operation, b: Operation) => a.price - b.price,
+      sortDirections: ["ascend", "descend"] as SortOrder[],
     },
-    { title: "Quantidade", dataIndex: "quantity", key: "quantity" },
+    {
+      title: "Quantidade",
+      dataIndex: "quantity",
+      key: "quantity",
+      sorter: (a: Operation, b: Operation) => a.quantity - b.quantity,
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+    },
     {
       title: "Taxa",
       dataIndex: "fee",
       key: "fee",
-      render: (v: number) => v.toFixed(2),
+      render: (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`,
+      sorter: (a: Operation, b: Operation) => a.fee - b.fee,
+      sortDirections: ["ascend", "descend"] as SortOrder[],
     },
     {
       title: "",
@@ -127,7 +152,7 @@ export default function OperationsTable({ operations, setOperations }: Props) {
         title={editingOp ? "Editar Operação" : "Adicionar Operação"}
         open={isModalVisible}
         onCancel={() => setModalVisible(false)}
-        onOk={handleSubmit(onSubmit)}
+        onOk={submitForm}
         okText={editingOp ? "Salvar" : "Adicionar"}
         cancelText="Cancelar"
         okButtonProps={{
@@ -155,8 +180,21 @@ export default function OperationsTable({ operations, setOperations }: Props) {
           },
         }}
       >
-        <Form layout="vertical">
-          <Form.Item label="Nome da Ação" required>
+        <Form
+          layout="vertical"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              submitForm();
+            }
+          }}
+        >
+          <Form.Item
+            label="Nome da Ação"
+            required
+            validateStatus={errors.name ? "error" : ""}
+            help={errors.name?.message}
+          >
             <Controller
               name="name"
               control={control}
@@ -167,7 +205,12 @@ export default function OperationsTable({ operations, setOperations }: Props) {
             />
           </Form.Item>
 
-          <Form.Item label="Data da Operação" required>
+          <Form.Item
+            label="Data da Operação"
+            required
+            validateStatus={errors.date ? "error" : ""}
+            help={errors.date?.message}
+          >
             <Controller
               name="date"
               control={control}
@@ -182,7 +225,12 @@ export default function OperationsTable({ operations, setOperations }: Props) {
             />
           </Form.Item>
 
-          <Form.Item label="Tipo" required>
+          <Form.Item
+            label="Tipo"
+            required
+            validateStatus={errors.type ? "error" : ""}
+            help={errors.type?.message}
+          >
             <Controller
               name="type"
               control={control}
@@ -198,7 +246,12 @@ export default function OperationsTable({ operations, setOperations }: Props) {
             />
           </Form.Item>
 
-          <Form.Item label="Preço da Ação (R$)" required>
+          <Form.Item
+            label="Preço da Ação (R$)"
+            required
+            validateStatus={errors.price ? "error" : ""}
+            help={errors.price?.message}
+          >
             <Controller
               name="price"
               control={control}
@@ -208,12 +261,23 @@ export default function OperationsTable({ operations, setOperations }: Props) {
                   style={{ width: "100%" }}
                   min={0}
                   step={0.01}
+                  formatter={(value) =>
+                    value !== undefined ? String(value).replace(".", ",") : ""
+                  }
+                  parser={(display) =>
+                    display ? Number(display.replace(/,/g, ".")) : 0
+                  }
                 />
               )}
             />
           </Form.Item>
 
-          <Form.Item label="Quantidade" required>
+          <Form.Item
+            label="Quantidade"
+            required
+            validateStatus={errors.quantity ? "error" : ""}
+            help={errors.quantity?.message}
+          >
             <Controller
               name="quantity"
               control={control}
@@ -223,7 +287,12 @@ export default function OperationsTable({ operations, setOperations }: Props) {
             />
           </Form.Item>
 
-          <Form.Item label="Taxa de Corretagem (R$)" required>
+          <Form.Item
+            label="Taxa de Corretagem (R$)"
+            required
+            validateStatus={errors.fee ? "error" : ""}
+            help={errors.fee?.message}
+          >
             <Controller
               name="fee"
               control={control}
@@ -233,6 +302,12 @@ export default function OperationsTable({ operations, setOperations }: Props) {
                   style={{ width: "100%" }}
                   min={0}
                   step={0.01}
+                  formatter={(value) =>
+                    value !== undefined ? String(value).replace(".", ",") : ""
+                  }
+                  parser={(display) =>
+                    display ? Number(display.replace(/,/g, ".")) : 0
+                  }
                 />
               )}
             />

@@ -55,9 +55,12 @@ export function useOperationsChart({ operations }: Props) {
       }
     }
 
+    const ts = op.date!.valueOf() + i;
+
     return {
       index: i,
-      date: op.date!.format("DD/MM/YYYY"),
+      x: ts,
+      dateLabel: op.date!.format("DD/MM/YYYY"),
       ir: parseFloat(IR.toFixed(5)),
       pm: parseFloat(PM.toFixed(5)),
       qm: QM,

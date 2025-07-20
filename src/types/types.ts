@@ -20,7 +20,8 @@ export type FormValues = Omit<Operation, "id">;
 
 export type ChartPoint = {
   index: number;
-  date: string;
+  x: number;
+  dateLabel: string;
   ir: number;
   pm: number;
   qm: number;

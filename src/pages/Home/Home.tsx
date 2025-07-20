@@ -41,7 +41,6 @@ const Home: React.FC = () => {
           type="default"
           shape="default"
           variant="solid"
-          color="green"
           onClick={() => navigate("/calculadora")}
           className="mt-8 w-24 sm:w-28 h-12 sm:h-14 flex items-center justify-center text-black rounded-md"
         >

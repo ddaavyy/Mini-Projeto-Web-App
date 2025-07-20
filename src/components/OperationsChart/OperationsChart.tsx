@@ -111,12 +111,15 @@ export default function OperationsChart({ operations }: Props) {
             <CartesianGrid stroke="#f0f0f0" strokeDasharray="4 4" />
 
             <XAxis
-              dataKey="date"
+              dataKey="x"
               axisLine={{ stroke: "#ccc" }}
               tickLine={false}
               tick={{ fill: "#666", fontSize: 12 }}
               interval="preserveStartEnd"
               minTickGap={20}
+              tickFormatter={(x: number) =>
+                data.find((d) => d.x === x)?.dateLabel ?? ""
+              }
             />
 
             <YAxis
@@ -146,6 +149,9 @@ export default function OperationsChart({ operations }: Props) {
                 if (name === "QM") return [value.toString(), name];
                 return [`R$ ${formatValue(value)}`, name];
               }}
+              labelFormatter={(x: number) =>
+                data.find((d) => d.x === x)?.dateLabel ?? ""
+              }
             />
 
             <Area
