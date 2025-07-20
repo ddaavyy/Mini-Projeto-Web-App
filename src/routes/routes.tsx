@@ -1,8 +1,8 @@
 import { Spin } from "antd";
 import React, { Suspense } from "react";
-import pages from "./listOfPages";
+import pages from "@/routes/listOfPages";
 import { Navigate, Route, Routes } from "react-router-dom";
-import type { RouteConfig } from "../types/types";
+import type { RouteConfig } from "@/types/types";
 
 export const LoadingComponent: React.FC = () => {
   return (
@@ -21,10 +21,6 @@ const routeConfig: { [key: string]: RouteConfig[] } = {
     {
       path: "/calculadora",
       element: <pages.Calculadora />,
-    },
-    {
-      path: "/loadingpage",
-      element: <LoadingComponent />,
     },
   ],
 };

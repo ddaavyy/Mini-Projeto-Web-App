@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -8,83 +7,38 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
 } from "recharts";
 import { Modal } from "antd";
+import type { CustomizedDotProps, Operation } from "@/types/types";
+import { useOperationsChart } from "@/hooks/useOperationsChart";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import type { ChartPoint, Operation } from "@/types/types";
 
 type Props = {
   operations: Operation[];
 };
 
 export default function OperationsChart({ operations }: Props) {
-  const sorted = [...operations].sort(
-    (a, b) => a.date.valueOf() - b.date.valueOf()
-  );
+  const {
+    data,
+    setZoomRange,
+    helpVisible,
+    setHelpVisible,
+    variableDescriptions,
+    formatValue,
+    displayData,
+  } = useOperationsChart({ operations });
 
-  let PM = 0;
-  let QM = 0;
-  let PA = 0;
-
-  const [zoomRange, setZoomRange] = useState<[number, number] | null>(null);
-  const [helpVisible, setHelpVisible] = useState(false);
-
-  const variableDescriptions: Record<string, string> = {
-    IR: "Imposto de Renda Devido",
-    PA: "Prejuízo Acumulado",
-    PM: "Preço Médio",
-    QM: "Quantidade Média",
-    RA: "Resultado Auferido",
-  };
-
-  const formatValue = (val: number): string => {
-    let s = val.toFixed(5);
-    s = s.replace(/(\.\d*?[1-9])0+$/g, "$1");
-    s = s.replace(/\.0+$/g, "");
-    const parts = s.split(".");
-    if (parts.length === 1) return s + ".00";
-    if (parts[1].length === 1) return s + "0";
-    return s;
-  };
-
-  const data: ChartPoint[] = sorted.map((op, i) => {
-    let IR = 0;
-    let RA = 0;
-
-    if (op.type === "buy") {
-      const totalCost = PM * QM + op.price * op.quantity + op.fee;
-      QM += op.quantity;
-      PM = totalCost / QM;
-    } else {
-      RA = (op.price - PM) * op.quantity - op.fee;
-      QM -= op.quantity;
-      if (RA < 0) {
-        PA += Math.abs(RA);
-      } else {
-        const compensacao = Math.min(RA, PA);
-        IR = (RA - compensacao) * 0.15;
-        PA -= compensacao;
-      }
+  const CustomizedDot: React.FC<CustomizedDotProps> = ({
+    cx,
+    cy,
+    stroke,
+    payload,
+  }) => {
+    if (!payload) {
+      return null;
     }
 
-    return {
-      index: i,
-      date: op.date.format("DD/MM/YYYY"),
-      ir: parseFloat(IR.toFixed(5)),
-      pm: parseFloat(PM.toFixed(5)),
-      qm: QM,
-      pa: parseFloat(PA.toFixed(5)),
-      ra: parseFloat(RA.toFixed(5)),
-    };
-  });
-
-  const displayData = zoomRange
-    ? data.slice(zoomRange[0], zoomRange[1] + 1)
-    : data;
-
-  const CustomizedDot = (props: any) => {
-    const { cx, cy, stroke, payload } = props;
+    const idx = payload.index;
     return (
       <circle
         cx={cx}
@@ -96,7 +50,6 @@ export default function OperationsChart({ operations }: Props) {
         style={{ cursor: "pointer" }}
         onClick={(e) => {
           e.stopPropagation();
-          const idx = payload.index as number;
           setZoomRange([
             Math.max(0, idx - 1),
             Math.min(data.length - 1, idx + 1),
@@ -106,62 +59,43 @@ export default function OperationsChart({ operations }: Props) {
     );
   };
 
-  const renderLegend = (props: any) => {
-    const { payload } = props;
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 16,
-        }}
-      >
-        {payload.map((entry: any) => (
-          <span
-            key={entry.value}
-            style={{
-              color: entry.color,
-              fontSize: 12,
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                backgroundColor: entry.color,
-                borderRadius: "50%",
-                display: "inline-block",
-              }}
-            />
-            {entry.value}
-          </span>
-        ))}
-        <QuestionCircleOutlined
-          style={{
-            fontSize: 16,
-            cursor: "pointer",
-            color: "#97bff3",
-            marginBottom: 2,
-          }}
-          onClick={() => setHelpVisible(true)}
-        />
-      </div>
-    );
-  };
+  const legendItems = [
+    { key: "ir", label: "IR Devido", color: "#556ee6" },
+    { key: "pa", label: "PA", color: "#f46a6a" },
+    { key: "pm", label: "PM", color: "#34c38f" },
+    { key: "qm", label: "QM", color: "#f1b44c" },
+    { key: "ra", label: "RA", color: "#A855F7" },
+  ];
 
   return (
     <div>
-      <h3 className="text-lg font-medium mb-2">Evolução das Variáveis</h3>
+      <h3 className="text-lg font-medium mb-2">Gráfico das Variáveis</h3>
+
+      <div className="flex flex-wrap justify-center items-center gap-6 mb-4">
+        {legendItems.map((item) => (
+          <span
+            key={item.key}
+            className="flex items-center gap-2 text-sm text-gray-700"
+          >
+            <span
+              className="w-3 h-3 rounded-full inline-block"
+              style={{ backgroundColor: item.color }}
+            />
+            {item.label}
+          </span>
+        ))}
+        <QuestionCircleOutlined
+          className="text-blue-400 text-base cursor-pointer"
+          onClick={() => setHelpVisible(true)}
+          title="Ajuda sobre as variáveis"
+        />
+      </div>
+
       <div onClick={() => setZoomRange(null)}>
         <ResponsiveContainer
           width="100%"
           height={300}
           style={{ outline: "none" }}
-          tabIndex={-1}
         >
           <ComposedChart
             data={displayData}
@@ -214,13 +148,6 @@ export default function OperationsChart({ operations }: Props) {
               }}
             />
 
-            <Legend
-              verticalAlign="top"
-              align="center"
-              content={renderLegend}
-              wrapperStyle={{ width: "100%", marginBottom: 8 }}
-            />
-
             <Area
               type="monotone"
               dataKey="ir"
@@ -261,7 +188,7 @@ export default function OperationsChart({ operations }: Props) {
               type="monotone"
               dataKey="ra"
               name="RA"
-              stroke="#3b76e1"
+              stroke="#A855F7"
               strokeWidth={2}
               dot={<CustomizedDot />}
               activeDot={false}
@@ -271,7 +198,7 @@ export default function OperationsChart({ operations }: Props) {
       </div>
 
       <Modal
-        visible={helpVisible}
+        open={helpVisible}
         title="Descrição das Variáveis"
         onCancel={() => setHelpVisible(false)}
         footer={null}

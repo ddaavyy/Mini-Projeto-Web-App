@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React from "react";
 import {
   Table,
   Modal,
@@ -9,22 +8,14 @@ import {
   Select,
   InputNumber,
   Dropdown,
-  Menu,
   Form,
+  type MenuProps,
 } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import type { Moment } from "moment";
-import type { FormValues, Operation } from "@/types/types";
-
-const defaultValues: FormValues = {
-  name: "",
-  date: null as any,
-  type: "buy",
-  price: 0,
-  quantity: 0,
-  fee: 0,
-};
+import type { Operation } from "@/types/types";
+import { useOperationsForm } from "@/hooks/useOperationsForm";
 
 type Props = {
   operations: Operation[];
@@ -32,73 +23,17 @@ type Props = {
 };
 
 export default function OperationsTable({ operations, setOperations }: Props) {
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [editingOp, setEditingOp] = useState<Operation | null>(null);
-
-  const { control, handleSubmit, reset } = useForm<FormValues>({
-    defaultValues,
-  });
-
-  const openAdd = () => {
-    setEditingOp(null);
-    reset(defaultValues);
-    setModalVisible(true);
-  };
-
-  const openEdit = (op: Operation) => {
-    setEditingOp(op);
-    reset({
-      name: op.name,
-      date: op.date,
-      type: op.type,
-      price: op.price,
-      quantity: op.quantity,
-      fee: op.fee,
-    });
-    setModalVisible(true);
-  };
-
-  const onSubmit = (data: FormValues) => {
-    if (editingOp) {
-      setOperations((ops) =>
-        ops.map((o) => (o.id === editingOp.id ? { ...o, ...data } : o))
-      );
-    } else {
-      setOperations((ops) => [...ops, { id: uuidv4(), ...data }]);
-    }
-    setModalVisible(false);
-  };
-
-  const onDelete = (id: string) => {
-    Modal.confirm({
-      title: "Confirmar exclusão?",
-      onOk: () => setOperations((ops) => ops.filter((o) => o.id !== id)),
-      okButtonProps: {
-        style: {
-          backgroundColor: "#000",
-          borderColor: "#000",
-          color: "#fff",
-        },
-        onMouseEnter: (e) => {
-          e.currentTarget.style.backgroundColor = "#333";
-          e.currentTarget.style.borderColor = "#333";
-        },
-        onMouseLeave: (e) => {
-          e.currentTarget.style.backgroundColor = "#000";
-          e.currentTarget.style.borderColor = "#000";
-        },
-      },
-      cancelButtonProps: {
-        style: { color: "#555" },
-        onMouseEnter: (e) => {
-          e.currentTarget.style.borderColor = "#919191";
-        },
-        onMouseLeave: (e) => {
-          e.currentTarget.style.borderColor = "#dbdbdb";
-        },
-      },
-    });
-  };
+  const {
+    editingOp,
+    isModalVisible,
+    control,
+    handleSubmit,
+    openAdd,
+    openEdit,
+    onSubmit,
+    onDelete,
+    setModalVisible,
+  } = useOperationsForm({ setOperations });
 
   const columns = [
     { title: "Ação", dataIndex: "name", key: "name" },
@@ -130,22 +65,20 @@ export default function OperationsTable({ operations, setOperations }: Props) {
     {
       title: "",
       key: "actions",
-      render: (_: any, record: Operation) => {
-        const menu = (
-          <Menu
-            onClick={({ key }) => {
-              if (key === "edit") openEdit(record);
-              else if (key === "delete") onDelete(record.id);
-            }}
-            items={[
-              { label: "Editar", key: "edit" },
-              { label: "Excluir", key: "delete" },
-            ]}
-          />
-        );
+      render: (_: unknown, record: Operation) => {
+        const menuProps: MenuProps = {
+          items: [
+            { label: "Editar", key: "edit" },
+            { label: "Excluir", key: "delete" },
+          ],
+          onClick: ({ key }) => {
+            if (key === "edit") openEdit(record);
+            else onDelete(record.id);
+          },
+        };
         return (
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <EllipsisOutlined style={{ fontSize: 20 }} />
+          <Dropdown menu={menuProps} trigger={["click"]} arrow>
+            <EllipsisOutlined style={{ fontSize: 20, cursor: "pointer" }} />
           </Dropdown>
         );
       },
@@ -192,7 +125,7 @@ export default function OperationsTable({ operations, setOperations }: Props) {
 
       <Modal
         title={editingOp ? "Editar Operação" : "Adicionar Operação"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit(onSubmit)}
         okText={editingOp ? "Salvar" : "Adicionar"}

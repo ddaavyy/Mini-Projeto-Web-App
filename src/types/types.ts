@@ -1,4 +1,5 @@
 import type { Moment } from "moment";
+import type { DotProps } from "recharts";
 
 export type RouteConfig = {
   path: string;
@@ -8,7 +9,7 @@ export type RouteConfig = {
 export type Operation = {
   id: string;
   name: string;
-  date: Moment;
+  date: Moment | null;
   type: "buy" | "sell";
   price: number;
   quantity: number;
@@ -25,4 +26,10 @@ export type ChartPoint = {
   qm: number;
   pa: number;
   ra: number;
+};
+
+type PayloadWithIndex = { index: number };
+
+export type CustomizedDotProps = DotProps & {
+  payload?: PayloadWithIndex;
 };
