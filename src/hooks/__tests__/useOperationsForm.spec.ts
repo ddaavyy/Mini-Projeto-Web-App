@@ -2,9 +2,8 @@ import { act, renderHook } from "@testing-library/react-hooks";
 import { Modal } from "antd";
 import moment from "moment";
 
+import { useOperationsForm } from "@/hooks/useOperationsForm";
 import type { FormValues, Operation } from "@/types/types";
-
-import { useOperationsForm } from "../useOperationsForm";
 
 jest.mock("uuid", () => ({
   v4: () => "MOCK_UUID",

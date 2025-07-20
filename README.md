@@ -1,69 +1,124 @@
-# React + TypeScript + Vite
+# Mini-Projeto Web App: Calculadora de IR Simplificada
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este repositório contém uma aplicação front-end em **React** com **TypeScript**, que permite registrar e acompanhar operações de compra e venda de ações, calcular o Imposto de Renda devido e visualizar resultados em tabela e gráfico interativo.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📂 Estrutura de Pastas
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+mini-projeto-web-app/
+├─ public/                 # Arquivos estáticos 
+├─ src/
+│  ├─ assets/              # Imagens, logos, ícones
+│  ├─ components/          # Componentes UI 
+│  │  ├─ OperationsChart/
+│  │  │  ├─ OperationsChart.tsx
+│  │  │  └─ __tests__/OperationsChart.spec.tsx
+│  │  └─ OperationsTable/
+│  │     ├─ OperationsTable.tsx
+│  │     └─ __tests__/OperationsTable.spec.tsx
+│  ├─ hooks/               # Hooks customizados (useOperationsForm)
+│  ├─ pages/               # Páginas do app
+│  ├─ routes/              # Definição de rotas React Router
+│  ├─ types/               # Definições de tipagens
+│  ├─ App.tsx              # Componente raiz
+│  └─ main.tsx             # Entrada do React + Vite
+├─ .eslintrc.js            # Regras ESLint
+├─ jest.config.ts          # Configuração Jest + ts-jest
+├─ tsconfig.json           # Configuração TypeScript
+├─ tailwind.config.js      # Configuração Tailwind CSS (se usado)
+├─ vite.config.ts          # Configuração Vite
+└─ package.json            # Scripts e dependências
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Tecnologias
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **React 18** + **Vite**
+* **TypeScript**
+* **Ant Design** (UI) + **Tailwind CSS**
+* **Recharts** (gráficos)
+* **React Hook Form** + **Yup** (forms e validação)
+* **Jest** + **@testing-library/react** (testes)
+* **ESLint** (qualidade de código)
+* **pnpm** (gerenciador de pacotes)
+
+---
+
+## 🛠 Pré-requisitos
+
+* **Node.js** v16 ou superior
+* **pnpm** v7 ou superior
+
+---
+
+## 📥 Instalação e Setup
+
+1. **Clone** o repositório:
+
+   ```bash
+   git clone https://github.com/seu-usuario/mini-projeto-web-app.git
+   cd mini-projeto-web-app
+   ```
+
+2. **Instale** dependências com pnpm:
+
+   ```bash
+   pnpm install
+   ```
+
+---
+
+## ⚙️ Scripts Disponíveis
+
+| Comando               | O que faz                                                                   |
+| --------------------- | --------------------------------------------------------------------------- |
+| `pnpm run dev`        | Inicia o servidor de desenvolvimento ([http://localhost](http://localhost)) |
+| `pnpm run build`      | Compila para produção (`dist/`)                                             |
+| `pnpm run preview`    | Serve o build de produção localmente                                        |
+| `pnpm lint`       | Executa ESLint em todo o projeto                                            |
+| `pnpm test`       | Roda todos os testes unitários com cobertura                                |
+| `pnpm test:watch` | Roda testes em modo *watch* (re-executa ao salvar)                          |
+| `pnpm coverage`   | Gera relatório de cobertura (`coverage/`)                                   |
+
+---
+
+## 📝 Como usar
+
+1. Execute:
+
+   ```bash
+   pnpm run dev
+   ```
+2. Abra o navegador em `http://localhost:5173` (ou porta indicada no terminal).
+3. Na página home, aperte o botão abaixo para ir para a página da calculadora, utilize **+ Adicionar Ação** para cadastrar uma operação.
+4. A **tabela** lista as operações, com **sorters**, **filters** e ações de **editar/excluir**.
+5. O **gráfico** exibe métricas de IR, PM, QM e PA ao longo do tempo.
+
+---
+
+## 🧪 Testes
+
+* Testes de componentes e hooks estão em `src/components/**/__tests__/*.spec.tsx`.
+* Para rodar cobertura basta apenas dar o comando:
+
+  ```bash
+  pnpm teste
+  ```
+  Ou:
+  ```bash
+  pnpm coverage
+  ```
+* O relatório aparecerá na pasta `coverage/`.
+
+---
+
+## 🤝 Contribuições
+
+Pull requests são bem-vindos. Para alterações maiores, abra uma *issue* primeiro para discutirmos.
+
+---
+###
+Espero que tenham gostado!!!!!

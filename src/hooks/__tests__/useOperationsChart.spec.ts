@@ -1,9 +1,8 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 import moment from "moment";
 
+import { useOperationsChart } from "@/hooks/useOperationsChart";
 import type { Operation } from "@/types/types";
-
-import { useOperationsChart } from "../useOperationsChart";
 
 describe("useOperationsChart hook", () => {
   const makeBuy: (
