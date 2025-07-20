@@ -11,7 +11,7 @@ import {
   Select,
   Table,
 } from "antd";
-import type { SortOrder } from "antd/es/table/interface";
+import type { ColumnsType, SortOrder } from "antd/es/table/interface";
 import type { Moment } from "moment";
 import React from "react";
 import { Controller } from "react-hook-form";
@@ -63,7 +63,7 @@ export default function OperationsTable({ operations, setOperations }: Props) {
         { text: "Compra", value: "buy" },
         { text: "Venda", value: "sell" },
       ],
-      onFilter: (value, record) => record.type === value,
+      onFilter: (value: string, record: {type: string}) => record.type === value,
     },
     {
       title: "Preço",
@@ -129,7 +129,7 @@ export default function OperationsTable({ operations, setOperations }: Props) {
           <div className="overflow-x-auto lg:overflow-x-hidden">
             <Table
               dataSource={operations}
-              columns={columns}
+              columns={columns as ColumnsType}
               rowKey="id"
               pagination={false}
               scroll={{ x: "max-content" }}

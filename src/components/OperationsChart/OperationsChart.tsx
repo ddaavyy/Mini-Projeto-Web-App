@@ -25,7 +25,6 @@ export default function OperationsChart({ operations }: Props) {
     helpVisible,
     setHelpVisible,
     variableDescriptions,
-    formatValue,
     displayData,
   } = useOperationsChart({ operations });
 
@@ -147,8 +146,17 @@ export default function OperationsChart({ operations }: Props) {
               labelStyle={{ color: "#333", fontSize: 12 }}
               itemStyle={{ fontSize: 12 }}
               formatter={(value: number, name: string) => {
-                if (name === "QM") return [value.toString(), name];
-                return [`R$ ${formatValue(value)}`, name];
+                if (name === "QM") {
+                  const formattedQM = new Intl.NumberFormat("pt-BR", {
+                    maximumFractionDigits: 0,
+                  }).format(value);
+                  return [formattedQM, name];
+                }
+                const formattedMoney = new Intl.NumberFormat("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 5,
+                }).format(value);
+                return [`R$ ${formattedMoney}`, name];
               }}
               labelFormatter={(x: number) =>
                 data.find((d) => d.x === x)?.dateLabel ?? ""

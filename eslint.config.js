@@ -19,6 +19,14 @@ export default tseslint.config([
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
       'import/order': 'warn',
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_"
+        }
+      ],
     },
     extends: [
       js.configs.recommended,

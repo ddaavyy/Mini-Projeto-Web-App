@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Modal } from "antd";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 import type { FormValues, Operation } from "@/types/types";
@@ -31,7 +31,7 @@ export function useOperationsForm({ setOperations }: Props) {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues,
-    resolver: yupResolver(operationSchema),
+    resolver: (yupResolver(operationSchema) as unknown) as Resolver<FormValues>,
   });
 
   const openAdd = () => {
