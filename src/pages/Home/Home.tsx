@@ -1,8 +1,9 @@
-import React from "react";
-import { Button } from "antd";
-import { useNavigate } from "react-router-dom";
-import bgPattern from "@/assets/setaBolsa.png";
 import { CalculatorFilled } from "@ant-design/icons";
+import { Button } from "antd";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+import bgPattern from "@/assets/setaBolsa.png";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();

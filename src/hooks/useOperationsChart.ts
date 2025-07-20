@@ -1,5 +1,6 @@
-import type { ChartPoint, Operation } from "@/types/types";
 import { useState } from "react";
+
+import type { ChartPoint, Operation } from "@/types/types";
 
 type Props = {
   operations: Operation[];

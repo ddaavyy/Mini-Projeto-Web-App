@@ -1,8 +1,9 @@
+import { useEffect, useState } from "react";
+
 import BreadcrumbNav from "@/components/BreadcrumbNav/BreadcrumbNav";
 import OperationsChart from "@/components/OperationsChart/OperationsChart";
 import OperationsTable from "@/components/OperationsTable/OperationsTable";
 import type { Operation } from "@/types/types";
-import { useEffect, useState } from "react";
 
 export default function Calculadora() {
   const [operations, setOperations] = useState<Operation[]>([]);

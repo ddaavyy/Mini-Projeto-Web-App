@@ -1,7 +1,8 @@
 import { Spin } from "antd";
 import React, { Suspense } from "react";
-import pages from "@/routes/listOfPages";
 import { Navigate, Route, Routes } from "react-router-dom";
+
+import pages from "@/routes/listOfPages";
 import type { RouteConfig } from "@/types/types";
 
 export const LoadingComponent: React.FC = () => {

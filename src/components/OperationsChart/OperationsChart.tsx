@@ -1,17 +1,18 @@
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Modal } from "antd";
 import {
-  ResponsiveContainer,
-  ComposedChart,
   Area,
+  CartesianGrid,
+  ComposedChart,
   Line,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
 } from "recharts";
-import { Modal } from "antd";
-import type { CustomizedDotProps, Operation } from "@/types/types";
+
 import { useOperationsChart } from "@/hooks/useOperationsChart";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import type { CustomizedDotProps, Operation } from "@/types/types";
 
 type Props = {
   operations: Operation[];

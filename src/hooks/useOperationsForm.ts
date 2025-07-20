@@ -1,9 +1,10 @@
-import type { FormValues, Operation } from "@/types/types";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { yupResolver } from "@hookform/resolvers/yup";
+
+import type { FormValues, Operation } from "@/types/types";
 import { operationSchema } from "@/validations/operations";
 
 const defaultValues: FormValues = {
